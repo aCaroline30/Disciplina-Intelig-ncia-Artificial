@@ -4,7 +4,6 @@ import time
 import heapq
 import random
 
-# --- Lógica do Jogo e Algoritmos ---
 
 class State:
     def __init__(self, board, parent=None, move="", depth=0, cost=0):
@@ -12,7 +11,7 @@ class State:
         self.parent = parent
         self.move = move
         self.depth = depth
-        self.cost = cost # Usado para heurística
+        self.cost = cost
 
     def __lt__(self, other):
         return self.cost < other.cost
@@ -55,9 +54,9 @@ def get_manhattan(board):
     distance = 0
     for i in range(len(board)):
         if board[i] != 0:
-            # Posição atual
+        
             r, c = i // 3, i % 3
-            # Posição alvo
+    
             target = board[i] - 1
             tr, tc = target // 3, target % 3
             distance += abs(r - tr) + abs(c - tc)
@@ -67,11 +66,11 @@ def solve(initial_board, mode):
     start_time = time.time()
     initial_state = State(initial_board)
     
-    # Configuração de custo inicial baseada no modo
+  
     if mode == "bfs":
         queue = [initial_state]
     else:
-        # A* ou Ganancioso (Heurística pura)
+      
         if mode == "misplaced":
             initial_state.cost = get_out_of_place(initial_board)
         elif mode == "manhattan_plus":
@@ -109,14 +108,13 @@ def solve(initial_board, mode):
                     succ.cost = get_out_of_place(succ.board)
                     heapq.heappush(queue, (succ.cost, succ))
                 elif mode == "manhattan_plus":
-                    # f(x) = g(x) + h(x) -> g=misplaced, h=manhattan
+                   
                     succ.cost = get_out_of_place(succ.board) + get_manhattan(succ.board)
                     heapq.heappush(queue, (succ.cost, succ))
-                else: # bfs
+                else:
                     queue.append(succ)
     return None
 
-# --- Interface Gráfica ---
 
 class PuzzleGUI:
     def __init__(self, root):
@@ -127,7 +125,7 @@ class PuzzleGUI:
         self.create_widgets()
 
     def create_widgets(self):
-        # Frame do Tabuleiro
+  
         board_frame = tk.Frame(self.root)
         board_frame.pack(pady=20)
 
@@ -138,7 +136,7 @@ class PuzzleGUI:
             self.buttons.append(btn)
         self.update_board()
 
-        # Controles
+   
         ctrl_frame = tk.Frame(self.root)
         ctrl_frame.pack(pady=10)
 
@@ -148,7 +146,7 @@ class PuzzleGUI:
         tk.Button(ctrl_frame, text="Heurística: g(x)", command=lambda: self.run_solve("misplaced")).grid(row=1, column=1, padx=5)
         tk.Button(ctrl_frame, text="Heurística: g(x) + h(x)", command=lambda: self.run_solve("manhattan_plus")).grid(row=1, column=2, padx=5)
 
-        # Labels de Status
+
         self.status_label = tk.Label(self.root, text="Pronto para iniciar", fg="blue")
         self.status_label.pack(pady=10)
 
@@ -159,7 +157,7 @@ class PuzzleGUI:
                                    bg="white" if val != 0 else "darkgrey")
 
     def shuffle_board(self):
-        # Gera um estado resolvível fazendo movimentos aleatórios
+       
         for _ in range(100):
             r, c = self.board.index(0)//3, self.board.index(0)%3
             possible_moves = []
